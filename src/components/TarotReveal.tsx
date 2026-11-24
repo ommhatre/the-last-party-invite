@@ -151,7 +151,7 @@ function RevealOverlay({ guest, getOrigin, onClosed }: TarotRevealProps) {
           <div data-scroll-item>
             <SafeImage src={decor.dividerMid} className="tarot-scroll__divider" loading="eager" fallback={<OrnamentRule />} />
           </div>
-          <p className="tarot-scroll__roast" data-scroll-item>
+          <p className="tarot-scroll__roast" lang={guest.roastLang} data-scroll-item>
             {guest.roast}
           </p>
         </div>

@@ -324,6 +324,13 @@
   line-height: 1.4;
 }
 
+.tarot-scroll__roast:lang(hi) {
+  font-family: 'Noto Serif Devanagari', var(--font-body), serif;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
 /* ---------- Counter ---------- */
 .court__counter {
   display: flex;
