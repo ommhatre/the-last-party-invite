@@ -1,0 +1,696 @@
+/* =========================================================
+   SECTION 01 - THE FORBIDDEN ENTRANCE
+   The palace-doors scene is drawn on a "stage" where 1 source pixel = var(--u).
+   Door bounds inside scene_palace_doors.png (508 x 445): x 161-384, y 31-388, seam at 272.5.
+   ========================================================= */
+.entrance {
+  /* doors take ~72% of the height; the title block is centred in the space below them */
+  --u: min(72svh / 445, 92vw / 223);
+  position: relative;
+  isolation: isolate;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--near-black);
+}
+
+.entrance::after {
+  /* bridge into the court below */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 8;
+  height: 14vh;
+  background: linear-gradient(to top, var(--near-black), transparent);
+  pointer-events: none;
+}
+
+/* Blurred copy of the scene fills any space the stage does not cover */
+.entrance__backdrop {
+  position: absolute;
+  inset: -40px;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 40%, rgba(75, 16, 29, 0.6), transparent 70%),
+    var(--near-black);
+}
+
+.entrance__backdrop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(14px) brightness(0.4) saturate(1.1);
+}
+
+/* ---------- Whole-screen tap target ---------- */
+.entrance__trigger {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  padding: 0;
+  cursor: pointer;
+}
+
+.entrance__trigger:disabled {
+  cursor: default;
+}
+
+.entrance__trigger:focus-visible {
+  outline: none;
+}
+
+.entrance__trigger:focus-visible .entrance__doorway {
+  outline: 2px solid var(--champagne);
+  outline-offset: 6px;
+}
+
+/* ---------- Stage ---------- */
+.entrance__stage {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 272.5 * var(--u));
+  display: block;
+  width: calc(508 * var(--u));
+  height: calc(445 * var(--u));
+  transform-origin: calc(272.5 * var(--u)) calc(210 * var(--u));
+  will-change: transform;
+}
+
+.entrance__stage::after {
+  /* soften the stage edges into the blurred backdrop */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, var(--near-black) 0%, transparent 12%, transparent 88%, var(--near-black) 100%),
+    linear-gradient(to bottom, transparent 70%, rgba(16, 6, 9, 0.85) 100%);
+  opacity: 0.85;
+}
+
+.entrance__scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+.entrance__doorway {
+  position: absolute;
+  left: calc(161 * var(--u));
+  top: calc(31 * var(--u));
+  display: block;
+  width: calc(223 * var(--u));
+  height: calc(357 * var(--u));
+  overflow: hidden;
+  border-radius: 50% 50% 0 0 / 19% 19% 0 0;
+  perspective: calc(900 * var(--u));
+}
+
+.entrance__beyond {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: radial-gradient(ellipse at 50% 60%, #6b3a1c, #21070e 80%);
+}
+
+.entrance__beyond img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 60%;
+  filter: brightness(0.9);
+}
+
+.entrance__light {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  transform: scale(0.8);
+  background: radial-gradient(ellipse at 50% 62%, #fff5da 0%, rgba(239, 213, 154, 0.85) 25%, rgba(196, 161, 90, 0.4) 50%, transparent 80%);
+  mix-blend-mode: screen;
+}
+
+.entrance__gap {
+  position: absolute;
+  z-index: 3;
+  top: 6%;
+  bottom: 0;
+  left: 50%;
+  display: block;
+  width: 2px;
+  transform: translateX(-50%) scaleY(0.6);
+  background: linear-gradient(to bottom, transparent, #fff1cc 25%, #f0cf86 75%, transparent);
+  box-shadow: 0 0 20px 5px rgba(234, 211, 160, 0.55);
+  opacity: 0.3;
+  pointer-events: none;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+.entrance--opening .entrance__gap {
+  animation: none;
+}
+
+/* ---------- Door leaves: slices of the scene image ---------- */
+.door {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  display: block;
+  width: 50%;
+  background-color: #3a0c17;
+  background-image: var(--door-img), linear-gradient(180deg, #52121f, #26080f);
+  background-size: calc(508 * var(--u)) calc(445 * var(--u)), cover;
+  background-repeat: no-repeat;
+  backface-visibility: visible;
+  will-change: transform;
+}
+
+.door--left {
+  left: 0;
+  transform-origin: left center;
+  background-position: calc(-161 * var(--u)) calc(-31 * var(--u)), 0 0;
+  box-shadow: inset -1px 0 0 rgba(214, 189, 133, 0.35);
+}
+
+.door--right {
+  right: 0;
+  transform-origin: right center;
+  background-position: calc(-272.5 * var(--u)) calc(-31 * var(--u)), 0 0;
+  box-shadow: inset 1px 0 0 rgba(214, 189, 133, 0.35);
+}
+
+.entrance--opening .door {
+  /* darken the inside face as each leaf turns away */
+  filter: brightness(0.9);
+}
+
+/* Handle glints (handles sit at roughly x 257 / 288, y 283 in the scene) */
+.entrance__glint {
+  position: absolute;
+  top: calc(283 * var(--u));
+  display: block;
+  width: calc(26 * var(--u));
+  height: calc(26 * var(--u));
+  margin: calc(-13 * var(--u)) 0 0 calc(-13 * var(--u));
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6dc 0%, rgba(240, 207, 134, 0.7) 30%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.entrance__glint--l {
+  left: calc(257 * var(--u));
+}
+
+.entrance__glint--r {
+  left: calc(288 * var(--u));
+}
+
+/* ---------- Text ---------- */
+.entrance__text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(392 * var(--u));
+  bottom: 0;
+  /* above the bottom fade (.entrance::after) */
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.2rem max(1.2rem, env(safe-area-inset-bottom));
+  text-align: center;
+}
+
+.entrance__eyebrow {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.42em;
+  /* balances the trailing letter-spacing so the line is truly centred */
+  padding-left: 0.42em;
+  text-transform: uppercase;
+  color: var(--champagne);
+}
+
+.entrance__title {
+  margin-top: 0.35rem;
+  font-family: var(--font-showpiece);
+  font-weight: 700;
+  /* sized so the title stays on one line on phones */
+  font-size: clamp(1.4rem, 8.4vw, 2.8rem);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  background: linear-gradient(180deg, #fff1cc 0%, #ead3a0 35%, #c4a15a 70%, #8a6a2f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.6)) drop-shadow(0 0 18px rgba(234, 190, 110, 0.35));
+}
+
+.entrance__divider {
+  width: min(64vw, 240px);
+  height: auto;
+  margin: 0.7rem 0 0.8rem;
+}
+
+.entrance__prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--parchment);
+  animation: prompt-breathe 3.6s ease-in-out infinite;
+}
+
+.entrance__key {
+  width: 12px;
+  height: auto;
+  filter: drop-shadow(0 0 6px rgba(196, 161, 90, 0.6));
+}
+
+/* ---------- Dust ---------- */
+.dust {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dust__mote {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--champagne);
+  box-shadow: 0 0 6px rgba(234, 211, 160, 0.8);
+  opacity: 0;
+  animation: dust-drift linear infinite;
+  will-change: transform, opacity;
+}
+
+/* ---------- Light flood behind the card ---------- */
+.entrance__flood {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    rgba(234, 211, 160, 0.18) 0%,
+    rgba(48, 8, 16, 0.7) 55%,
+    rgba(16, 6, 9, 0.94) 100%
+  );
+}
+
+.entrance__scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 9;
+  color: var(--gold);
+  transform: translateX(-50%);
+  animation: float-soft 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.entrance__scroll-cue svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* =========================================================
+   INVITATION CARD (parchment asset)
+   ========================================================= */
+.invite-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  padding: max(16px, env(safe-area-inset-top)) 14px 44px;
+  perspective: 1600px;
+}
+
+.invite {
+  position: relative;
+  width: min(94vw, 420px);
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.75));
+}
+
+.invite__paper {
+  --pw: min(94vw, 420px);
+  position: relative;
+  max-height: calc(100svh - 70px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  text-align: center;
+  scrollbar-width: none;
+}
+
+.invite__paper::-webkit-scrollbar {
+  display: none;
+}
+
+.invite__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.66rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: #7a1c2c;
+}
+
+.invite__eyebrow::before,
+.invite__eyebrow::after {
+  content: '';
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.invite__eyebrow::after {
+  /* the trailing letter-spacing sits before this rule; pull it back so both sides match */
+  margin-left: -0.34em;
+}
+
+.invite__summons {
+  margin: 0.6rem auto 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  color: #4a2a14;
+}
+
+.invite__summons-text {
+  display: block;
+  max-width: 24ch;
+  margin: 0 auto;
+  text-wrap: balance;
+}
+
+.invite__party {
+  display: block;
+  margin: 0.2rem 0 0.25rem;
+  white-space: nowrap;
+  font-family: var(--font-showpiece);
+  font-weight: 900;
+  font-style: normal;
+  font-size: clamp(1.45rem, 6.6vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--oxblood);
+  text-shadow: 0 1px 0 rgba(255, 240, 210, 0.55);
+}
+
+.invite__honoree {
+  display: block;
+  margin-top: 0.1rem;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(2rem, 1.6rem + 2.2vw, 2.6rem);
+  line-height: 1.12;
+  text-wrap: balance;
+  color: #5a1324;
+  text-shadow: 0 1px 0 rgba(255, 240, 210, 0.5);
+}
+
+.invite__divider {
+  width: 70%;
+  margin: 0.4rem auto 0.6rem;
+}
+
+.invite__details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 0.4rem;
+}
+
+.invite__detail {
+  grid-column: 1 / -1;
+}
+
+.invite__detail--half {
+  grid-column: span 1;
+}
+
+.invite__detail:not(.invite__detail--half),
+.invite__detail--half + .invite__detail--half {
+  padding-top: 0.5rem;
+  background: linear-gradient(90deg, transparent, rgba(110, 70, 30, 0.4), transparent) top / 70% 1px no-repeat;
+}
+
+/* first half-width detail: the usual rule on top */
+.invite__detail--half:not(.invite__detail--half + .invite__detail--half) {
+  padding-top: 0.5rem;
+  background: linear-gradient(90deg, transparent, rgba(110, 70, 30, 0.4), transparent) top / 70% 1px no-repeat;
+}
+
+/* its partner: the same top rule plus a short vertical rule between the two */
+.invite__detail--half + .invite__detail--half {
+  padding-top: 0.5rem;
+  background:
+    linear-gradient(90deg, transparent, rgba(110, 70, 30, 0.4), transparent) top / 70% 1px no-repeat,
+    linear-gradient(to bottom, transparent, rgba(110, 70, 30, 0.4), transparent) left 60% / 1px 60% no-repeat;
+}
+
+.invite__details > .invite__detail:first-child {
+  padding-top: 0;
+  background: none;
+}
+
+.invite__detail.invite__detail--prose dd {
+  max-width: 26ch;
+  margin-inline: auto;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.02rem;
+  line-height: 1.25;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.invite__detail dt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.58rem;
+  letter-spacing: 0.32em;
+  padding-left: 0.32em;
+  text-transform: uppercase;
+  color: #74501f;
+}
+
+.invite__detail dd {
+  margin-top: 0.1rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  color: var(--oxblood);
+}
+
+.invite__actions {
+  margin-top: 1.1rem;
+}
+
+/* Royal seal-style button: burgundy velvet, double gold border, gold diamonds at the ends */
+.invite__enter {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 52px;
+  padding: 0.85rem 1.3rem 0.85rem 1.5rem;
+  white-space: nowrap;
+  border: 1px solid #c4a15a;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(255, 220, 150, 0.2), transparent 65%),
+    linear-gradient(180deg, #6a1729 0%, #4b101d 55%, #300810 100%);
+  box-shadow:
+    inset 0 0 0 3px #300810,
+    inset 0 0 0 4px rgba(214, 189, 133, 0.8),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(80, 40, 15, 0.55),
+    0 8px 16px rgba(60, 20, 10, 0.45);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f3dfa8;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+  -webkit-tap-highlight-color: transparent;
+  animation: enter-glow 2.8s ease-in-out infinite;
+  transition: transform 0.25s var(--ease-royal);
+}
+
+.invite__enter::before,
+.invite__enter::after {
+  /* gold diamonds pinned to either end, like the clasp of a royal sash */
+  content: '';
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
+  background: linear-gradient(135deg, #f3dfa8, #c4a15a 50%, #7d5e27);
+  box-shadow: 0 0 0 1px #300810;
+  transform: rotate(45deg);
+}
+
+.invite__enter::before {
+  left: -6px;
+}
+
+.invite__enter::after {
+  right: -6px;
+}
+
+.invite__enter-shine {
+  /* a slow light sweep inside the inner border */
+  position: absolute;
+  inset: 4px;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.invite__enter-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 235, 190, 0.3) 50%, transparent 65%);
+  background-size: 250% 100%;
+  animation: shimmer 3.4s ease-in-out infinite;
+}
+
+.invite__enter-label {
+  padding-left: 0.18em; /* balances the trailing letter-spacing */
+}
+
+.invite__enter-icon {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  color: #ead3a0;
+}
+
+.invite__enter-arrow {
+  animation: enter-nudge 1.6s ease-in-out infinite;
+}
+
+.invite__enter:active {
+  transform: scale(0.97);
+}
+
+.invite__enter:focus-visible {
+  outline: 2px solid var(--oxblood);
+  outline-offset: 5px;
+}
+
+@keyframes enter-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(214, 170, 90, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(214, 170, 90, 0.65));
+  }
+}
+
+@keyframes enter-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+/* Front cover that flips up to reveal the card */
+.invite__cover {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  transform-origin: top center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background:
+    repeating-linear-gradient(45deg, rgba(196, 161, 90, 0.06) 0 1px, transparent 1px 16px),
+    repeating-linear-gradient(-45deg, rgba(196, 161, 90, 0.06) 0 1px, transparent 1px 16px),
+    linear-gradient(180deg, #4b101d, #300810 60%, #21070e);
+  box-shadow:
+    inset 0 0 0 10px #300810,
+    inset 0 0 0 11px var(--gold),
+    inset 0 0 0 15px #300810,
+    inset 0 0 0 16px var(--gold-dim),
+    inset 0 0 60px rgba(0, 0, 0, 0.6);
+}
+
+.invite__cover-crown {
+  width: 64px;
+  height: auto;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.6));
+}
+
+.invite__cover-seal {
+  display: block;
+  width: clamp(96px, 28vw, 120px);
+  aspect-ratio: 1;
+}
+
+.invite__cover-seal img,
+.invite__cover-seal svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.6));
+}
+
+.invite__cover-label {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--champagne);
+}
+
+.invite__cover .invite__divider {
+  width: 55%;
+  margin: 0;
+}

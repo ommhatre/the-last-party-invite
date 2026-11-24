@@ -1,0 +1,98 @@
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes dust-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--dust-o, 0.6);
+  }
+  85% {
+    opacity: var(--dust-o, 0.6);
+  }
+  100% {
+    transform: translate3d(var(--dust-dx, 20px), -110vh, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes candle-flicker {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(0.97);
+  }
+  75% {
+    opacity: 0.95;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes flame {
+  0%,
+  100% {
+    transform: translateX(-50%) scaleY(1) rotate(-1deg);
+  }
+  50% {
+    transform: translateX(-50%) scaleY(1.12) rotate(2deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes prompt-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    letter-spacing: 0.32em;
+  }
+  50% {
+    opacity: 1;
+    letter-spacing: 0.36em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

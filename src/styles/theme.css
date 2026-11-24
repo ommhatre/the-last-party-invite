@@ -1,0 +1,43 @@
+:root {
+  /* Palette */
+  --oxblood: #300810;
+  --burgundy: #4b101d;
+  --maroon: #21070e;
+  --near-black: #100609;
+  --gold: #c4a15a;
+  --champagne: #d6bd85;
+  --parchment: #e9d8b8;
+  --ivory: #f1e9d9;
+
+  --gold-dim: rgba(196, 161, 90, 0.35);
+  --gold-faint: rgba(196, 161, 90, 0.14);
+  --ink: #2a1208;
+  --ink-soft: #5b3a24;
+
+  --gold-gradient: linear-gradient(
+    135deg,
+    #8a6a2f 0%,
+    #c4a15a 22%,
+    #ead3a0 45%,
+    #c4a15a 62%,
+    #7d5e27 100%
+  );
+  --parchment-gradient: radial-gradient(ellipse at 30% 20%, #f3e6c9 0%, #e9d8b8 40%, #d9c29a 80%, #c6a977 100%);
+
+  /* Typography */
+  --font-display: 'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
+  /* Showpiece headlines only (entrance title, the last line of the finale) */
+  --font-showpiece: 'Cinzel Decorative', 'Cinzel', 'Times New Roman', serif;
+  /* Calligraphy for the honoree's name */
+  --font-script: 'Pinyon Script', 'Snell Roundhand', cursive;
+  --font-body: 'Cormorant Garamond', 'Garamond', 'Georgia', serif;
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Motion */
+  --ease-royal: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Layout */
+  --section-pad: clamp(4.5rem, 10vh, 7.5rem);
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --max-w: 1240px;
+}
