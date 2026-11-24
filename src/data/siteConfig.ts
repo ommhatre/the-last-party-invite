@@ -39,8 +39,8 @@ export interface SiteConfig {
     eyebrow: string;
     /** Printed above the party name. */
     summons: string;
-    /** Printed between the party name and the honorees' names. */
-    occasion: string;
+    /** Printed beneath the party name. */
+    tagline: string;
     enterLabel: string;
   };
 
@@ -65,9 +65,6 @@ export interface SiteConfig {
   proclamation: {
     eyebrow: string;
     title: string;
-    message: string;
-    dressCodeLabel: string;
-    etiquetteTitle: string;
     etiquette: string[];
     signOff: string;
   };
@@ -91,7 +88,7 @@ export const siteConfig: SiteConfig = {
   eventDate: '25th November, 2026',
   eventTime: '7 PM',
   venue: 'The Mirage',
-  dressCode: 'Dress like a zombie apocalypse hits tomorrow and you refuse to die underdressed',
+  dressCode: 'Dress like it\u2019s the last party of ur life.',
   rsvpPhone: '',
   rsvpMessage: 'By royal decree, I shall attend the Imperial Court.',
   countdownTarget: '2026-11-25T19:00:00+05:30',
@@ -105,17 +102,18 @@ export const siteConfig: SiteConfig = {
 
   invitation: {
     eyebrow: 'By Royal Decree',
+    // rendered as "— BY ROYAL DECREE —" by the card's styling
     summons: 'You are cordially summoned to',
-    occasion: 'celebrating the birthdays of',
+    tagline: 'One night. No excuses.',
     enterLabel: 'Enter the Court',
   },
 
   court: {
     eyebrow: 'Chapter II',
-    title: 'The Court of Roast & Toast',
-    subtitle: 'Every kingdom has its characters. Ours are particularly questionable.',
+    title: 'The Court of Spirit & Fate',
+    subtitle: 'Unfold the tarot cards to reveal your spirit animal.',
     counterSuffix: 'Royal Subjects. 0 Secrets.',
-    hint: 'The cards are dealt. Tap one to turn it over',
+    hint: 'Tap as many as u want',
   },
 
   banquet: {
@@ -124,24 +122,19 @@ export const siteConfig: SiteConfig = {
     subtitle: 'A little indulgence has never harmed a royal.',
     drinksLabel: "The Alchemist's Elixirs",
     foodLabel: 'From the Royal Kitchens',
-    tableHint: 'Tap anything on the table',
+    tableHint: 'Tap any glowing vessel or cloche',
     foodNote: 'Only a glimpse. The full feast shall be revealed in person.',
   },
 
   proclamation: {
     eyebrow: 'Chapter IV',
-    title: 'By Order of the Crown',
-    message: 'Attendance is expected. Excuses shall be reviewed by the royal council.',
-    dressCodeLabel: 'Court Attire',
-    etiquetteTitle: 'Rules of the Court',
+    title: 'Rules of the Court',
     etiquette: [
-      'Arrive on time. The Crown does not wait; the Crown makes entrances.',
-      'Bow, curtsy or at least nod respectfully at Their Majesties.',
-      'Phones are permitted only for flattering portraits of the royal.',
-      'Gifts are optional. Compliments are mandatory.',
-      'Whatever happens at court, stays at court.',
+      'Arrive on time. The Crown makes entrances, not waits.',
+      'Flattering angles only. Bad photos are treason.',
+      'What happens at court, stays at court.',
     ],
-    signOff: 'Sealed by the Royal Chancellery',
+    signOff: '\u2014 Sealed by the Royal Chancellery',
   },
 
   final: {

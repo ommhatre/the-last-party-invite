@@ -1,9 +1,9 @@
-﻿import { useCallback, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+﻿import { useCallback, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { gsap, useGSAP } from '../lib/gsap';
 import { MOTION_OK, revealSection } from '../lib/reveal';
 import { useIntro } from '../lib/intro';
-import { props, scenes } from '../data/assets';
-import { dishes, drinks, type Dish, type Drink, type TableSpot } from '../data/menu';
+import { scenes } from '../data/assets';
+import { dishes, drinks, type Dish, type Drink, type TableRegion } from '../data/menu';
 import { siteConfig } from '../data/siteConfig';
 import { SafeImage } from '../components/SafeImage';
 import { SectionHeading } from '../components/SectionHeading';
@@ -14,20 +14,20 @@ import '../styles/banquet.css';
 type Selection = { kind: 'drink' | 'dish'; id: string } | null;
 
 /**
- * Candlesticks on the table, same coordinate system as `table` in menu.ts.
- * The layout keeps every item's standing rectangle (width x image height) clear of the others,
- * so nothing overlaps: items in a row behind are offset sideways from the row in front.
+ * Gentle candlelight pools aligned to the real pillar & votive flames
+ * in scenes.diningTable.
  */
-const CANDLES: TableSpot[] = [
-  { x: 20, y: 53.0, w: 3.2 },
-  { x: 40.5, y: 52.6, w: 3.2 },
-  { x: 68.5, y: 56.0, w: 3.2 },
+const CANDLE_FLICKERS: Array<{ x: number; y: number; size: number; delay: number }> = [
+  { x: 30.0, y: 40.0, size: 12, delay: 0 },
+  { x: 61.0, y: 36.2, size: 12, delay: -1.3 },
+  { x: 73.0, y: 39.2, size: 12, delay: -2.4 },
+  { x: 48.0, y: 48.2, size: 14, delay: -0.8 },
 ];
 
 type TableEntry = { kind: 'drink'; drink: Drink; index: number } | { kind: 'dish'; dish: Dish };
 
-/** Drinks and dishes mixed together, back of the table first (DOM order = depth = tab order). */
-const depth = (e: TableEntry) => (e.kind === 'drink' ? e.drink.table.y : e.dish.table.y);
+/** Sorted back-to-front by bottom edge (y2) so foreground cloches layer naturally in front. */
+const depth = (e: TableEntry) => (e.kind === 'drink' ? e.drink.region.y2 : e.dish.region.y2);
 const tableItems: TableEntry[] = [
   ...drinks.map((drink, index): TableEntry => ({ kind: 'drink', drink, index })),
   ...dishes.map((dish): TableEntry => ({ kind: 'dish', dish })),
@@ -37,40 +37,60 @@ function ClocheFallback() {
   return <span className="dish__cloche-fallback" aria-hidden="true" />;
 }
 
-/** Places an item on the table: anchored at its base, layered by depth. */
-function spotStyle({ x, y, w }: TableSpot, extra?: Record<string, string>): CSSProperties {
+/** Anchors an extracted item patch directly over its exact percentage rectangle in scenes.diningTable. */
+function regionStyle({ x1, y1, x2, y2 }: TableRegion, extra?: Record<string, string>): CSSProperties {
   return {
-    left: `${x - w / 2}%`,
-    bottom: `${100 - y}%`,
-    width: `${w}%`,
-    zIndex: Math.round(y * 10),
+    left: `${x1}%`,
+    top: `${y1}%`,
+    width: `${x2 - x1}%`,
+    height: `${y2 - y1}%`,
+    zIndex: Math.round(y2 * 10),
     ...extra,
   } as CSSProperties;
 }
 
 interface TableItemProps {
-  spot: TableSpot;
+  region: TableRegion;
+  patch: string;
   label: string;
   kind: 'drink' | 'dish';
   active: boolean;
   tint?: string;
+  staggerIndex: number;
   onSelect: () => void;
-  children: ReactNode;
 }
 
-function TableItem({ spot, label, kind, active, tint, onSelect, children }: TableItemProps) {
+function TableItem({
+  region,
+  patch,
+  label,
+  kind,
+  active,
+  tint,
+  staggerIndex,
+  onSelect,
+}: TableItemProps) {
+  const vars: Record<string, string> = {
+    '--stagger': `${(staggerIndex * -0.85).toFixed(2)}s`,
+  };
+  if (tint) vars['--tint'] = tint;
+
   return (
     <button
       type="button"
       className={`feast-item feast-item--${kind} ${active ? 'is-active' : ''}`}
-      style={spotStyle(spot, tint ? { '--tint': tint } : undefined)}
+      style={regionStyle(region, vars)}
       onClick={onSelect}
       aria-haspopup="dialog"
       aria-label={label}
       data-feast-item
     >
-      <span className="feast-item__shadow" aria-hidden="true" />
-      {children}
+      <span className="feast-item__aura" aria-hidden="true" />
+      <SafeImage src={patch} alt="" className="feast-item__patch" />
+      <span className="feast-item__sparks" aria-hidden="true">
+        <i />
+        <i />
+      </span>
     </button>
   );
 }
@@ -87,21 +107,18 @@ export function BanquetSection() {
       mm.add(MOTION_OK, () => {
         revealSection(root.current!);
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: '.feast-scene', start: 'top 70%' },
+          scrollTrigger: { trigger: '.feast-scene', start: 'top 72%' },
         });
-        tl.fromTo('.feast-scene__img', { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 1.2, ease: 'power2.out' })
-          .fromTo(
-            '.feast-candle',
-            { opacity: 0, y: -16 },
-            { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out' },
-            0.5,
-          )
-          .fromTo(
-            '[data-feast-item]',
-            { opacity: 0, y: -30 },
-            { opacity: 1, y: 0, duration: 0.6, stagger: { each: 0.1, from: 'random' }, ease: 'bounce.out' },
-            0.7,
-          );
+        tl.fromTo(
+          '.feast-scene__canvas',
+          { opacity: 0, scale: 1.035 },
+          { opacity: 1, scale: 1, duration: 1.15, ease: 'power2.out' },
+        ).fromTo(
+          '[data-feast-item]',
+          { opacity: 0 },
+          { opacity: 1, duration: 0.7, stagger: 0.06, ease: 'power1.out' },
+          0.45,
+        );
       });
       return () => mm.revert();
     },
@@ -132,8 +149,11 @@ export function BanquetSection() {
     return {
       kicker: b.foodLabel,
       title: d.name,
+      subtitle: d.epithet,
       text: d.description,
       image: d.image,
+      imageFit: 'cover',
+      coverImage: d.cover,
       imageFallback: <ClocheFallback />,
       frame: 'squareOrnate',
     };
@@ -160,41 +180,47 @@ export function BanquetSection() {
             <SafeImage src={scenes.diningTable} alt="" className="feast-scene__img" />
             <span className="feast-scene__glow" aria-hidden="true" />
 
-            {CANDLES.map((spot, i) => (
-              <span key={i} className="feast-candle" style={spotStyle(spot)} aria-hidden="true">
-                <SafeImage src={props.candelabra} alt="" className={i % 2 ? 'is-mirrored' : ''} />
-              </span>
+            {CANDLE_FLICKERS.map((f, i) => (
+              <span
+                key={i}
+                className="feast-flicker"
+                style={
+                  {
+                    left: `${f.x}%`,
+                    top: `${f.y}%`,
+                    width: `${f.size}%`,
+                    '--flicker-delay': `${f.delay}s`,
+                  } as CSSProperties
+                }
+                aria-hidden="true"
+              />
             ))}
 
-            {tableItems.map((item) =>
+            {tableItems.map((item, orderIndex) =>
               item.kind === 'drink' ? (
                 <TableItem
                   key={item.drink.id}
-                  spot={item.drink.table}
+                  region={item.drink.region}
+                  patch={item.drink.patch}
                   kind="drink"
                   label={`Discover ${item.drink.name}`}
                   tint={item.drink.tint}
+                  staggerIndex={orderIndex}
                   active={isActive('drink', item.drink.id)}
                   onSelect={() => setSelection({ kind: 'drink', id: item.drink.id })}
-                >
-                  <SafeImage
-                    src={item.drink.image}
-                    alt=""
-                    className="feast-item__img"
-                    fallback={<FlaskFallback tint={item.drink.tint} variant={item.index} />}
-                  />
-                </TableItem>
+                />
               ) : (
                 <TableItem
                   key={item.dish.id}
-                  spot={item.dish.table}
+                  region={item.dish.region}
+                  patch={item.dish.patch}
                   kind="dish"
-                  label={`Discover ${item.dish.name}`}
+                  label={`Uncover ${item.dish.name}`}
+                  tint="#d4a24c"
+                  staggerIndex={orderIndex}
                   active={isActive('dish', item.dish.id)}
                   onSelect={() => setSelection({ kind: 'dish', id: item.dish.id })}
-                >
-                  <SafeImage src={item.dish.cover} alt="" className="feast-item__img" fallback={<ClocheFallback />} />
-                </TableItem>
+                />
               ),
             )}
           </div>

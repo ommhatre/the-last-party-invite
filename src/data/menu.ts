@@ -1,119 +1,129 @@
 /**
  * LIQUID & FEAST
- * Edit the drinks (potions) and the dishes here.
- * Images come from src/data/assets.ts. Every decanter, glass, dish, bowl and dessert
- * you supplied is listed there, so swapping is a one-word change, e.g. drinks.amber.
- * Only a teaser of the menu is shown on the site.
+ * Edit the drinks and the dishes here.
  *
- * `table` places the item on the velvet table in scenes.diningTable, in % of that image:
- *   x - centre of the item's base, % of image width
- *   y - where the item stands, % of image height
- *   w - width of the item, % of image width (items further back should be smaller)
- * The tabletop inside the gold border is a tilted diamond: back corner ~(55, 46),
- * left ~(8, 54), right ~(93, 52.5), front ~(50, 63.5). The photo is shown zoomed, cropping
- * ~17% off each side, so keep items between x 20 and 80.
- * Items should not overlap: an item covers x ± w/2 and stands w * (image h/w) / 1.78 tall above y.
+ * All 4 closed cloches and 4 decanters are baked directly into `scenes.diningTable`
+ * with unified perspective, shadows, and candlelight. Each item's `region` (`x1, y1, x2, y2`
+ * in % of `scenes.diningTable`) and `patch` (feathered RGBA cutout extracted from those
+ * exact coordinates) turn the painted vessels and domes into seamless interactive elements.
  */
-import { drinks as drinkImg, food } from './assets';
+import { banquetPatches, drinks as drinkImg, food } from './assets';
 
-export interface TableSpot {
-  x: number;
-  y: number;
-  w: number;
+/** Exact bounding box in % (0-100) of scenes.diningTable. */
+export interface TableRegion {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
 }
 
 export interface Drink {
   id: string;
   name: string;
   description: string;
-  ingredients: string[];
+  ingredients?: string[];
+  /** Seamless patch extracted from scenes.diningTable for in-place table interaction. */
+  patch: string;
+  /** Crisp studio decanter asset shown inside the ornate gold frame on reveal. */
   image: string;
-  /** Glow colour behind the bottle. */
+  /** Subtle accent colour for glass shimmer. */
   tint: string;
-  table: TableSpot;
+  region: TableRegion;
 }
 
 export interface Dish {
   id: string;
   name: string;
+  /** Royal epithet displayed beneath the dish title. */
+  epithet?: string;
   description: string;
-  /** What sits on the table before it is tapped (a cloche, a stand...). */
+  /** Seamless cloche patch extracted from scenes.diningTable. */
+  patch: string;
+  /** Closed cloche asset that lifts upward inside MenuReveal when tapped. */
   cover: string;
-  /** What is revealed in the details panel. */
+  /** Studio dish photo revealed inside the ornate frame when tapped. */
   image: string;
-  table: TableSpot;
+  region: TableRegion;
 }
 
 export const drinks: Drink[] = [
   {
-    id: 'potion-01',
-    name: 'The Midnight Elixir',
-    description: 'A dangerously charming concoction, best consumed before questionable decisions.',
-    ingredients: ['Dark berries', 'Smoked honey', 'A whisper of mischief'],
-    image: drinkImg.crestedRed,
-    tint: '#7a1424',
-    table: { x: 44.5, y: 57.4, w: 5.4 },
-  },
-  {
-    id: 'potion-02',
-    name: "The Empress's Blush",
-    description: 'Rosy, regal and far stronger than it looks. Much like Their Majesties.',
-    ingredients: ['Rose', 'Pomegranate', 'Sparkling gold'],
-    image: drinkImg.roundRuby,
-    tint: '#a2283c',
-    table: { x: 55, y: 52.8, w: 5.2 },
-  },
-  {
-    id: 'potion-03',
-    name: 'Liquid Gold',
-    description: 'Poured only for the worthy. Fortunately, tonight everyone is worthy.',
-    ingredients: ['Citrus', 'Saffron syrup', 'Edible gold leaf'],
-    image: drinkImg.roundGold,
+    id: 'drink-01',
+    name: 'Jameson',
+    description: 'Smooth Irish gold. Best enjoyed neat, on the rocks, or while making promises you won\u2019t keep tomorrow.',
+    patch: banquetPatches.bottleJameson,
+    image: drinkImg.amber,
     tint: '#b4893c',
-    table: { x: 45, y: 49, w: 5.4 },
+    region: { x1: 24.0, y1: 37.6, x2: 33.2, y2: 49.4 },
   },
   {
-    id: 'potion-04',
-    name: "The Senator's Alibi",
-    description: 'Erases all memory of what you said at the table. Allegedly.',
-    ingredients: ['Blue curacao', 'Lime', 'Plausible deniability'],
+    id: 'drink-02',
+    name: 'Bombay Sapphire',
+    description: 'Distilled botanical magic in royal blue. Crisp, deceptive, and dangerously easy to refill.',
+    patch: banquetPatches.bottleBombay,
     image: drinkImg.sapphireBlue,
-    tint: '#1f5a66',
-    table: { x: 65, y: 49, w: 5.4 },
+    tint: '#2a6f88',
+    region: { x1: 34.8, y1: 36.6, x2: 43.4, y2: 49.0 },
+  },
+  {
+    id: 'drink-03',
+    name: 'Absolut',
+    description: 'Crystal-clear liquid courage. Pairs with any juice and every questionable dance move.',
+    patch: banquetPatches.bottleAbsolut,
+    image: drinkImg.crystal,
+    tint: '#dfd4ba',
+    region: { x1: 57.2, y1: 34.0, x2: 66.2, y2: 47.0 },
+  },
+  {
+    id: 'drink-04',
+    name: 'Fratelli Red',
+    description: 'Deep crimson velvet for those pretending to be civilized before midnight.',
+    patch: banquetPatches.bottleFratelli,
+    image: drinkImg.ruby,
+    tint: '#8e1b2e',
+    region: { x1: 67.2, y1: 38.6, x2: 77.6, y2: 49.2 },
   },
 ];
 
 export const dishes: Dish[] = [
   {
     id: 'dish-01',
-    name: 'Wok Toss Chilli Jumbo Prawn',
-    description: 'Jumbo prawns wok-tossed in chilli and garlic. Arrive hungry. Leave silent.',
-    cover: food.wokTossChilliJumboPrawn,
-    image: food.wokTossChilliJumboPrawn,
-    table: { x: 49.5, y: 62.0, w: 12.0 },
+    name: 'Crispy Lotus Stem',
+    epithet: 'Gilded Lotus Crisps',
+    description: 'Tossed in sweet heat and royal spice. Crunchy enough to silence the court.',
+    patch: banquetPatches.clocheLotus,
+    cover: food.clocheGoldDome,
+    image: food.crispyLotusStem,
+    region: { x1: 5.8, y1: 44.3, x2: 23.8, y2: 53.8 },
   },
   {
     id: 'dish-02',
-    name: 'Crispy Lotus Stem',
-    description: 'Glazed lotus coins with sesame and chilli: crisp, sweet, and quietly addictive.',
-    cover: food.crispyLotusStem,
-    image: food.crispyLotusStem,
-    table: { x: 31.5, y: 54.2, w: 10.5 },
+    name: 'Wok Toss Chilli Jumbo Prawn',
+    epithet: 'Imperial Fire Prawns',
+    description: 'Wok-seared in blistering chilli glaze. Handle with dignity - or your bare hands.',
+    patch: banquetPatches.clochePrawn,
+    cover: food.clocheGrandCenterpiece,
+    image: food.wokTossChilliJumboPrawn,
+    region: { x1: 25.2, y1: 49.4, x2: 47.8, y2: 59.6 },
   },
   {
     id: 'dish-03',
     name: 'Thai Green Curry',
-    description: 'Coconut, basil and green fire in a bowl fit for a throne.',
-    cover: food.thaiGreenCurry,
+    epithet: 'The Emerald Elixir',
+    description: 'Fragrant coconut, sweet basil, and quiet heat. Fit for surviving tomorrow.',
+    patch: banquetPatches.clocheCurry,
+    cover: food.clocheServingDome,
     image: food.thaiGreenCurry,
-    table: { x: 74.5, y: 53.6, w: 10.0 },
+    region: { x1: 56.0, y1: 47.2, x2: 78.2, y2: 57.4 },
   },
   {
     id: 'dish-04',
     name: 'Som Tam Salad',
-    description: 'Green papaya, lime and heat: a sharp green wake-up call for royal palates.',
-    cover: food.somTamSalad,
+    epithet: 'The Sovereign\u2019s Crunch',
+    description: 'Green papaya, crushed peanuts, and sharp lime to balance your questionable liquid choices.',
+    patch: banquetPatches.clocheSomtam,
+    cover: food.clocheGoldDome,
     image: food.somTamSalad,
-    table: { x: 61.5, y: 58.4, w: 11.0 },
+    region: { x1: 76.8, y1: 41.6, x2: 93.4, y2: 50.2 },
   },
 ];

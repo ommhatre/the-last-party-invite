@@ -511,7 +511,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: min(92vw, 420px);
+  width: min(100%, 420px);
   max-height: 92svh;
   overflow-y: auto;
   scrollbar-width: none;
@@ -535,6 +535,10 @@ a {
   width: min(54vw, 210px);
   aspect-ratio: var(--frame-ratio, 1);
   flex: none;
+}
+
+.reveal__media--dish {
+  width: min(62vw, 238px);
 }
 
 .reveal__frame {
@@ -571,6 +575,47 @@ a {
   filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.55));
 }
 
+.reveal__opening--cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 18px rgba(16, 4, 7, 0.65);
+  pointer-events: none;
+}
+
+.reveal__opening--cover img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  filter: contrast(1.04) saturate(1.06);
+}
+
+.reveal__cloche {
+  position: absolute;
+  inset: 12% -6% 14% -6%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.reveal__cloche img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 14px 18px rgba(0, 0, 0, 0.75))
+    drop-shadow(0 0 18px rgba(245, 204, 120, 0.55));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal__cloche {
+    display: none;
+  }
+}
+
 .reveal__media > img:not(.reveal__frame) {
   width: 100%;
   height: 100%;
@@ -599,6 +644,16 @@ a {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--oxblood);
+}
+
+.parchment-panel__subtitle {
+  margin: 0.15rem 0 0.1rem;
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7d5e27;
 }
 
 .parchment-panel .ornament-rule {

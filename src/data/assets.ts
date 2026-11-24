@@ -12,8 +12,8 @@ export const scenes = {
   imperialThrone: p('scenes/scene_imperial_throne.png'),
   throneRoom: p('scenes/scene_throne_room.png'),
   candlelitFeast: p('scenes/scene_candlelit_feast.png'),
-  /** 1080 x 1920, velvet banquet table under a chandelier (compressed from /assets/dining_table.png). */
-  diningTable: p('scenes/scene_dining_table.jpg'),
+  /** 1080 x 1920, unified banquet table scene with 4 closed cloches, 4 decanters, roses & candles. */
+  diningTable: p('scenes/scene_dining_table_feast.jpg'),
   banquetHall: p('scenes/scene_banquet_hall.png'),
   grandEntrance: p('scenes/scene_grand_entrance.png'),
 } as const;
@@ -75,13 +75,25 @@ export const drinks = {
   glassRedWine: p('drinks/glass_red_wine.png'),
 } as const;
 
+/** Seamless silhouette-feathered patches extracted directly from scenes.diningTable. */
+export const banquetPatches = {
+  clocheLotus: p('banquet/cloche_lotus.png'),
+  clochePrawn: p('banquet/cloche_prawn.png'),
+  clocheCurry: p('banquet/cloche_curry.png'),
+  clocheSomtam: p('banquet/cloche_somtam.png'),
+  bottleJameson: p('banquet/bottle_jameson.png'),
+  bottleBombay: p('banquet/bottle_bombay.png'),
+  bottleAbsolut: p('banquet/bottle_absolut.png'),
+  bottleFratelli: p('banquet/bottle_fratelli.png'),
+} as const;
+
 export const food = {
-  /** Plated dishes for The Last Party (cut from /assets/food). */
-  crispyLotusStem: p('food/dish_crispy_lotus_stem.png'),
-  somTamSalad: p('food/dish_som_tam_salad.png'),
-  thaiGreenCurry: p('food/dish_thai_green_curry.png'),
-  wokTossChilliJumboPrawn: p('food/dish_wok_toss_chilli_jumbo_prawn.png'),
-  /** Older cutouts kept for swapping. */
+  /** Studio dish photos for The Last Party (760 x 570 JPG, compressed from /assets/food). */
+  crispyLotusStem: p('food/dish_crispy_lotus_stem.jpg'),
+  somTamSalad: p('food/dish_som_tam_salad.jpg'),
+  thaiGreenCurry: p('food/dish_thai_green_curry.jpg'),
+  wokTossChilliJumboPrawn: p('food/dish_wok_toss_chilli_jumbo_prawn.jpg'),
+  /** Ornate cloches & older cutouts. */
   clocheGoldDome: p('food/cloche_gold_dome.png'),
   clocheGrandCenterpiece: p('food/cloche_grand_centerpiece.png'),
   clocheServingDome: p('food/cloche_serving_dome.png'),

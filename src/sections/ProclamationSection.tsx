@@ -68,18 +68,6 @@ export function ProclamationSection() {
             <div data-decree-line>
               <SafeImage src={decor.dividerTop} className="decree__divider" fallback={<OrnamentRule />} />
             </div>
-            <p className="decree__message" data-decree-line>
-              {p.message}
-            </p>
-
-            <div className="decree__attire" data-decree-line>
-              <span className="decree__attire-label">{p.dressCodeLabel}</span>
-              <span className="decree__attire-value">{siteConfig.dressCode}</span>
-            </div>
-
-            <h3 className="decree__subtitle" data-decree-line>
-              {p.etiquetteTitle}
-            </h3>
             <ol className="decree__rules">
               {p.etiquette.map((rule, i) => (
                 <li key={i} data-decree-line>

@@ -2,7 +2,7 @@ import { useRef, type CSSProperties } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { gsap, prefersReducedMotion, useGSAP } from '../lib/gsap';
 import { decor, seals } from '../data/assets';
-import { honoreeLine, invitationDetails, siteConfig } from '../data/siteConfig';
+import { invitationDetails, siteConfig } from '../data/siteConfig';
 import { SafeImage } from './SafeImage';
 import { OrnamentRule, WaxSealFallback } from './Ornament';
 interface InvitationCardProps {
@@ -53,9 +53,10 @@ export function InvitationCard({ onEnter }: InvitationCardProps) {
           <h1 id="invite-title" className="invite__summons" data-invite-item>
             <span className="invite__summons-text">{siteConfig.invitation.summons}</span>
             <span className="invite__party">{siteConfig.partyName}</span>
-            <span className="invite__summons-text">{siteConfig.invitation.occasion}</span>
-            <span className="invite__honoree">{honoreeLine()}</span>
           </h1>
+          <p className="invite__tagline" data-invite-item>
+            {siteConfig.invitation.tagline}
+          </p>
 
           <div data-invite-item>
             <SafeImage src={decor.dividerTop} className="invite__divider" loading="eager" fallback={<OrnamentRule />} />
