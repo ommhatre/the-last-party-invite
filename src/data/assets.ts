@@ -76,6 +76,12 @@ export const drinks = {
 } as const;
 
 export const food = {
+  /** Plated dishes for The Last Party (cut from /assets/food). */
+  crispyLotusStem: p('food/dish_crispy_lotus_stem.png'),
+  somTamSalad: p('food/dish_som_tam_salad.png'),
+  thaiGreenCurry: p('food/dish_thai_green_curry.png'),
+  wokTossChilliJumboPrawn: p('food/dish_wok_toss_chilli_jumbo_prawn.png'),
+  /** Older cutouts kept for swapping. */
   clocheGoldDome: p('food/cloche_gold_dome.png'),
   clocheGrandCenterpiece: p('food/cloche_grand_centerpiece.png'),
   clocheServingDome: p('food/cloche_serving_dome.png'),

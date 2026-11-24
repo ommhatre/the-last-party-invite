@@ -19,9 +19,9 @@ type Selection = { kind: 'drink' | 'dish'; id: string } | null;
  * so nothing overlaps: items in a row behind are offset sideways from the row in front.
  */
 const CANDLES: TableSpot[] = [
-  { x: 21, y: 52.8, w: 3.4 },
-  { x: 38.5, y: 52.8, w: 3.4 },
-  { x: 28, y: 58, w: 3.4 },
+  { x: 20, y: 53.0, w: 3.2 },
+  { x: 40.5, y: 52.6, w: 3.2 },
+  { x: 68.5, y: 56.0, w: 3.2 },
 ];
 
 type TableEntry = { kind: 'drink'; drink: Drink; index: number } | { kind: 'dish'; dish: Dish };
@@ -189,7 +189,7 @@ export function BanquetSection() {
                   key={item.dish.id}
                   spot={item.dish.table}
                   kind="dish"
-                  label={`Lift the cover: ${item.dish.name}`}
+                  label={`Discover ${item.dish.name}`}
                   active={isActive('dish', item.dish.id)}
                   onSelect={() => setSelection({ kind: 'dish', id: item.dish.id })}
                 >
