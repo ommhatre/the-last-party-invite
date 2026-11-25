@@ -122,6 +122,7 @@ export const food = {
 /** Tarot cards (640 x 960 JPG, compressed from the originals in /assets/cards). */
 export const cards = {
   back: p('cards/back.jpg'),
+  aryan: p('cards/aryan.jpg'),
   askar: p('cards/askar.jpg'),
   farhan: p('cards/farhan.jpg'),
   karan: p('cards/karan.jpg'),

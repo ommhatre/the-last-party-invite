@@ -18,6 +18,7 @@ export interface Guest {
 }
 
 export const guests: Guest[] = [
+  { id: 'aryan', name: 'Aryan', role: 'JAPANI GUDIYA', roast: 'Vitamin F deficit. Where F is Flowstate', card: cards.aryan },
   { id: 'askar', name: 'Askar', role: 'OATS EATER', roast: 'Can have 4 wives, but not a single glass of wine.', card: cards.askar },
   { id: 'farhan', name: 'Farhan', role: 'GENERIC MALLU GUY', roast: 'Om\u2019s +1 for today and someone else\u2019s -1.', card: cards.farhan },
   { id: 'karan', name: 'Karan', role: 'HECTIC', roast: 'Oh, I work so hard from my 4BHK with a chotu in Indiranagar.', card: cards.karan },
